@@ -3,8 +3,8 @@ import datetime
 import requests
 import io
 
-get_hosts(url):
-	text = '\n\n #{}    URL:{}'.format(str(time), url)
+def get_hosts(url):
+	text = '\n\n #{}    URL:{}'.format(str(datetime.time), url)
 	try:
 		data = requests.get(url)
 	except:
@@ -18,7 +18,7 @@ get_hosts(url):
 			text = text + regex('^[\@]*[\|]*(([\w]*\.)([\w]*)([\.[\w]*))\^$', host) + '\n'
 		elif regex('^127\.0\.0\.1[\s]*(([\w]*\.)([\w]*)([\.[\w]*))', host):
 			text = text + regex('^127\.0\.0\.1[\s]*(([\w]*\.)([\w]*)([\.[\w]*))', host) + '\n'
-	return 
+	return text
 
 filter = {} #List
 filter['EasyList_Adult']        = 'https://easylist-downloads.adblockplus.org/easylist_noadult.txt'

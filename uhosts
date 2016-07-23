@@ -1,0 +1,129 @@
+#!/usr/bin/python3
+# -*- coding:utf-8 -*-
+
+import uhosts_module
+import uhosts_lists
+import argparse
+import sys
+import os
+
+class uhost():
+	def __init__(self):
+		self.desc = '''
+		....
+		'''
+		self.parser = argparse.ArgumentParser(description=self.desc)
+		self.parser.add_argument('--hosts',           metavar='view',               help='list hosts')
+		self.parser.add_argument('--host',            metavar='0.0.0.0',            help='view the status')
+		self.parser.add_argument('-l', '--list',      metavar='name | view',        help='load a block list')
+		self.parser.add_argument('-b', '--block',     metavar='facebook.com',       help='set host \'0.0.0.0\'')
+		self.parser.add_argument('-a', '--add',       metavar='0.0.0.0 google.com', help='add a new host')
+		self.parser.add_argument('-r', '--rem',       metavar='0.0.0.0 google.com', help='remove a host')
+		self.parser.add_argument('-bp', '--backup',   metavar='home/hosts.bat',     help='create a backup')
+		self.parser.add_argument('-af', '--add_file', metavar='home/hosts.bat', 	help='add backup hosts')
+		self.parser.add_argument('-rf', '--rem_file', metavar='home/hosts.bat',     help='remove backup hosts')
+		if len(sys.argv) > 1 and sys.argv[1] == '--hosts':
+			self.args = self.parser.parse_args(['--hosts', 'ok'])
+		else:
+			self.args = self.parser.parse_args()
+		if len(sys.argv) == 1:
+			self.parser.print_help()
+			exit()
+		self.system_os = 'test'
+		uhosts_module.dir(self)
+
+		if self.args.hosts:
+			print('[+] Hosts list')
+			print(uhosts_module.read(self).read())
+
+		if self.args.list == 'view':
+			print('[+] BD - Hosts list')
+			for s in uhosts_lists.filter:
+				print('[-] ' + s)
+		elif self.args.list:
+			check = False
+			for s in uhosts_lists.filter:
+				if self.args.list.lower() == s.lower():
+					check = True
+					print('[+] BD - ' + s)
+					print(uhosts_lists.get_hosts(uhosts_lists.filter[s]))
+			if check != True:
+				print('[!] {}" Not found'.format(self.args.list))
+
+
+		if self.args.host:
+			h, i = uhosts_module.search(self, self.args.host)
+			if h == False:
+				print('[!] {}" Not found'.format(self.args.host))
+			else:
+				print('[+] Found "{}" in line {}'.format(h.replace('\n',''), i))
+
+		if self.args.block:
+			add = self.args.add
+			uhosts_module.add(self, '0.0.0.0 ' + add)
+			print('[+] Blocked {}'.format(add))
+
+		if self.args.add:
+			add = self.args.add
+			uhosts_module.add(self, add)
+			print('[+] Added {}'.format(add))
+
+		if self.args.rem:
+			rem = self.args.rem
+			i = uhosts_module.rem(self, rem)
+			if i == 0:
+				print('[!] "{}" Not found'.format(rem))
+			else:
+				print('[+] Removed {}'.format(rem))
+
+		if self.args.backup:
+			local = ''
+			file = self.args.backup
+			dir = os.getcwd()
+			if uhosts_module.regex('^/', file):
+				local = file
+			else:
+				local = dir + '/' + file
+			text = uhosts_module.read(self).read()
+			f = uhosts_module.write(local, text, 'w')
+			if f == False:
+				print('[!] You do not have permissions to access this or file does not exist')
+			else:
+				print('[+] Created a backup')
+
+		if self.args.add_file:
+			local = ''
+			file = self.args.add_file
+			dir = os.getcwd()
+			if uhosts_module.regex('^/', file):
+				local = file
+			else:
+				local = dir + '/' + file
+			f = uhosts_module.read_file(local)
+			if f == False:
+				print('[!] You do not have permissions to access this or file does not exist')
+			else:
+				uhosts_module.add_file(self, f)
+				print('[+] Added hosts')
+
+		if self.args.rem_file:
+			local = ''
+			file = self.args.rem_file
+			dir = os.getcwd()
+			if uhosts_module.regex('^/', file):
+				local = file
+			else:
+				local = dir + '/' + file
+			f = uhosts_module.read_file(local)
+			if f == False:
+				print('[!] You do not have permissions to access this or file does not exist')
+			else:
+				i = uhosts_module.rem_file(self, f)
+				print('[+] Removed {} hosts'.format(i))
+
+
+#try:
+uhost()
+#except KeyboardInterrupt:
+#	print('[!] ...')
+#	exit()

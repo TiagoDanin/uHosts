@@ -9,14 +9,23 @@ import os
 
 class uhost():
 	def __init__(self):
-		self.desc = '''
-		....
+		self.ascii_text = '''
+        _    _           _
+       | |  | |         | |
+  _   _| |__| | ___  ___| |_ ___
+ | | | |  __  |/ _ \/ __| __/ __|
+ | |_| | |  | | (_) \__ \ |_\__ \\
+  \__,_|_|  |_|\___/|___/\__|___/
+
+
 		'''
+		self.desc = '''By TiagoDanin'''
+		print(self.ascii_text)
 		self.parser = argparse.ArgumentParser(description=self.desc)
 		self.parser.add_argument('--hosts',           metavar='view',               help='list hosts')
 		self.parser.add_argument('--host',            metavar='0.0.0.0',            help='view the status')
 		self.parser.add_argument('-l', '--list',      metavar='name | view',        help='load a block list')
-		self.parser.add_argument('-b', '--block',     metavar='facebook.com',       help='set host \'0.0.0.0\'')
+		self.parser.add_argument('-b', '--block',     metavar='facebook.com',       help='set host to \'0.0.0.0\'')
 		self.parser.add_argument('-a', '--add',       metavar='0.0.0.0 google.com', help='add a new host')
 		self.parser.add_argument('-r', '--rem',       metavar='0.0.0.0 google.com', help='remove a host')
 		self.parser.add_argument('-bp', '--backup',   metavar='home/hosts.bat',     help='create a backup')

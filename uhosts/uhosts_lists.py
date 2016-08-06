@@ -1,10 +1,9 @@
 from uhosts_module import *
-import datetime
 import requests
 import io
 
 def get_hosts(url):
-	text = '\n\n #{}    URL:{}'.format(str(datetime.time), url)
+	text = '\n\nURL:{}'.format(url)
 	try:
 		data = requests.get(url)
 	except:

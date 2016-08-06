@@ -10,17 +10,28 @@ def regex(pattern, string):
 		return capt.group(1)
 	return False
 
+def check(input):
+	try:
+		f = open(input, 'r')
+	except FileNotFoundError:
+		return False
+	return True
+
 def dir(self):
-	if self.system_os == 'linux/macos':
+	if self.system_os == 'linux': #Linux <3
 		self.dir_hosts = '/etc/hosts'
-	elif self.system_os == 'linux':
+	elif self.system_os == 'linux2':
 		self.dir_hosts = '/etc/hosts'
-	elif self.system_os == 'macos':
+	elif self.system_os == 'linux3':
 		self.dir_hosts = '/etc/hosts'
-	elif self.system_os == 'osx':
+	elif self.system_os == 'darwin': #MacOS or OSx
 		self.dir_hosts = '/etc/hosts'
-	elif self.system_os == 'windows':
-		self.dir_hosts = '' #WINDOWS
+	elif self.system_os == 'win32': #BadWindows
+		self.dir_hosts = 'C:\Windows\System32\Drivers\etc\hosts'
+	elif self.system_os == 'win64':
+		self.dir_hosts = 'C:\Windows\System32\Drivers\etc\hosts'
+	elif self.system_os == 'cygwin': #BadWindows
+		self.dir_hosts = 'C:\Windows\System32\Drivers\etc\hosts'
 	elif self.system_os == 'test':
 		self.dir_hosts = 'hosts'
 	else:

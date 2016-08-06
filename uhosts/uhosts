@@ -9,42 +9,48 @@ import os
 
 class uhost():
 	def __init__(self):
-		self.ascii_text = '''
-        _    _           _
-       | |  | |         | |
-  _   _| |__| | ___  ___| |_ ___
- | | | |  __  |/ _ \/ __| __/ __|
- | |_| | |  | | (_) \__ \ |_\__ \\
-  \__,_|_|  |_|\___/|___/\__|___/
-
-
+		self.desc = '''
+          _    _           _
+         | |  | |         | |
+    _   _| |__| | ___  ___| |_ ___
+   | | | |  __  |/ _ \/ __| __/ __|
+   | |_| | |  | | (_) \__ \ |_\__ \\  By TiagoDanin
+    \__,_|_|  |_|\___/|___/\__|___/  Version 1.0.0
 		'''
-		self.desc = '''By TiagoDanin'''
-		print(self.ascii_text)
-		self.parser = argparse.ArgumentParser(description=self.desc)
-		self.parser.add_argument('--hosts',           metavar='view',               help='list hosts')
-		self.parser.add_argument('--host',            metavar='0.0.0.0',            help='view the status')
-		self.parser.add_argument('-l', '--list',      metavar='name | view',        help='load a block list')
-		self.parser.add_argument('-b', '--block',     metavar='facebook.com',       help='set host to \'0.0.0.0\'')
-		self.parser.add_argument('-a', '--add',       metavar='0.0.0.0 google.com', help='add a new host')
-		self.parser.add_argument('-r', '--rem',       metavar='0.0.0.0 google.com', help='remove a host')
-		self.parser.add_argument('-bp', '--backup',   metavar='home/hosts.bat',     help='create a backup')
-		self.parser.add_argument('-af', '--add_file', metavar='home/hosts.bat', 	help='add backup hosts')
-		self.parser.add_argument('-rf', '--rem_file', metavar='home/hosts.bat',     help='remove backup hosts')
-		if len(sys.argv) > 1 and sys.argv[1] == '--hosts':
-			self.args = self.parser.parse_args(['--hosts', 'ok'])
-		else:
-			self.args = self.parser.parse_args()
+		self.parser = argparse.ArgumentParser(self.desc)
+		self.parser.add_argument('-sh', '--set_hosts', metavar='/dir/hosts',                     help='set path file hosts'                   )
+		self.parser.add_argument('--hosts',            metavar='view',                           help='list hosts'                            )
+		self.parser.add_argument('--host',             metavar='0.0.0.0',                        help='view the status'                       )
+		self.parser.add_argument('-l', '--list',       metavar='name | view',                    help='view the list'                         )
+		self.parser.add_argument('-b', '--block',      metavar='facebook.com',                   help='set host to \'0.0.0.0\''               )
+		self.parser.add_argument('-a', '--add',        metavar='0.0.0.0 google.com',             help='add a new host'                        )
+		self.parser.add_argument('-r', '--rem',        metavar='0.0.0.0 google.com',             help='remove a host'                         )
+		self.parser.add_argument('-bp', '--backup',    metavar='home/hosts.bat',                 help='create a backup'                       )
+		self.parser.add_argument('-af', '--add_file',  metavar='home/hosts.bat', 	             help='add backup hosts'                      )
+		self.parser.add_argument('-rf', '--rem_file',  metavar='home/hosts.bat',                 help='remove backup hosts'                   )
+		self.args = self.parser.parse_args()
 		if len(sys.argv) == 1:
 			self.parser.print_help()
 			exit()
-		self.system_os = 'test'
+		#self.system_os = 'test'
+		self.system_os = sys.platform
 		uhosts_module.dir(self)
 
+		if self.args.set_hosts:
+			self.dir_hosts = self.args.set_hosts
+
+		check_file = uhosts_module.check(self.dir_hosts)
+		if check_file != True:
+			print('[!] Error not found file to hosts')
+			print('[?] Use the --set_hosts /dir/hosts')
+			exit()
+
+		#--hosts [view]
 		if self.args.hosts:
 			print('[+] Hosts list')
 			print(uhosts_module.read(self).read())
 
+		#--list [input] | [view]
 		if self.args.list == 'view':
 			print('[+] BD - Hosts list')
 			for s in uhosts_lists.filter:
@@ -58,8 +64,11 @@ class uhost():
 					print(uhosts_lists.get_hosts(uhosts_lists.filter[s]))
 			if check != True:
 				print('[!] {}" Not found'.format(self.args.list))
+				print('[+] Avaliable - Hosts list')
+				for s in uhosts_lists.filter:
+					print('[-] ' + s)
 
-
+		#--host [input]
 		if self.args.host:
 			h, i = uhosts_module.search(self, self.args.host)
 			if h == False:
@@ -67,16 +76,19 @@ class uhost():
 			else:
 				print('[+] Found "{}" in line {}'.format(h.replace('\n',''), i))
 
+		#--block [input]
 		if self.args.block:
-			add = self.args.add
-			uhosts_module.add(self, '0.0.0.0 ' + add)
-			print('[+] Blocked {}'.format(add))
+			block = self.args.block
+			uhosts_module.add(self, '0.0.0.0 ' + block)
+			print('[+] Blocked {}'.format(block))
 
+		#--add [input]
 		if self.args.add:
 			add = self.args.add
 			uhosts_module.add(self, add)
 			print('[+] Added {}'.format(add))
 
+		#--rem [input]
 		if self.args.rem:
 			rem = self.args.rem
 			i = uhosts_module.rem(self, rem)
@@ -85,6 +97,7 @@ class uhost():
 			else:
 				print('[+] Removed {}'.format(rem))
 
+		#--backup [input]
 		if self.args.backup:
 			local = ''
 			file = self.args.backup
@@ -100,6 +113,7 @@ class uhost():
 			else:
 				print('[+] Created a backup')
 
+		#--add_file [input]
 		if self.args.add_file:
 			local = ''
 			file = self.args.add_file
@@ -115,6 +129,7 @@ class uhost():
 				uhosts_module.add_file(self, f)
 				print('[+] Added hosts')
 
+		#--rem_file [input]
 		if self.args.rem_file:
 			local = ''
 			file = self.args.rem_file
@@ -131,8 +146,4 @@ class uhost():
 				print('[+] Removed {} hosts'.format(i))
 
 
-#try:
 uhost()
-#except KeyboardInterrupt:
-#	print('[!] ...')
-#	exit()

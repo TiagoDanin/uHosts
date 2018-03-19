@@ -1,2 +1,2 @@
 # uHosts
-SOON :D
+A editor of hosts
